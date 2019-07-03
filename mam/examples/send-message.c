@@ -16,8 +16,6 @@
  */
 #include <stdio.h>
 #include "mam/client.h"
-#include <stdio.h>
-#include <time.h>
 
 #define PRINT_LN(e) printf("DEBUG FILE %s:%d Error: %s \n", __FILE__, __LINE__, error_2_string(e));
 #define MAM_HOST "localhost"
@@ -125,17 +123,20 @@ int main(int argc, char **argv) {
   print_flex_trits("Bundle Hash", client.last_bundle_hash, FLEX_TRIT_SIZE_243);
 
   ///
+  /// DEBUG INFO
+  ///
+  tryte_t msg_id_tryte[MAM_MSG_ID_SIZE / 3];
+  trits_to_trytes(message_id, msg_id_tryte, MAM_MSG_ID_SIZE);
+
+  ///
   /// SEND PACKET
   ///
   int cm = 0;
-  time_t rawtime;
-  struct tm * timeinfo;
 
   while (cm < 32) {
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
     char buffer[256];
-    sprintf(buffer, "{\"current_time\": \"%s\", \"out\": %s}", asctime (timeinfo), payload);
+    sprintf(buffer, "{\"count\": \"%d\", \"out\": %s}", cm, payload);
+    print_flex_trits("Message ID", msg_id_tryte , MAM_MSG_ID_SIZE / 3);
     printf("MSG (%d), Payload: %s \n", cm, buffer);
 
     ret = mam_client_attach_packet(&client, message_id, buffer, last_packet);
@@ -153,13 +154,6 @@ int main(int argc, char **argv) {
     ++cm;
   }
 
-  ///
-  /// DEBUG INFO
-  ///
-  tryte_t msg_id[MAM_MSG_ID_SIZE / 3];
-  trits_to_trytes(message_id, msg_id, MAM_MSG_ID_SIZE);
-
-  print_flex_trits("Message ID", msg_id , MAM_MSG_ID_SIZE / 3);
   print_flex_trits("Bundle Hash", client.last_bundle_hash, FLEX_TRIT_SIZE_243);
 
   //

@@ -329,7 +329,6 @@ retcode_t mam_client_attach_packet(mam_client_t* const client,
 
   tryte_t* payload_trytes = (tryte_t*)malloc(2 * strlen(payload) * sizeof(tryte_t));
   ascii_to_trytes(payload, payload_trytes);
-  PRINT_LN(RC_OK)
   if ((ret = mam_api_bundle_write_packet(&client->mam_api,
                                           message_id,
                                           payload_trytes,
@@ -338,6 +337,7 @@ retcode_t mam_client_attach_packet(mam_client_t* const client,
                                           is_last_packet,
                                           bundle)) != RC_OK)
   {
+    PRINT_LN(ret)
     goto done;
   }
 
@@ -345,7 +345,6 @@ retcode_t mam_client_attach_packet(mam_client_t* const client,
     ret = send_bundle(client, bundle);
     bundle_transactions_free(&bundle);
   }
-  PRINT_LN(RC_OK)
   done:
     free(payload_trytes);
     bundle_transactions_free(&bundle);
