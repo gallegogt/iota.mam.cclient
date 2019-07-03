@@ -43,3 +43,5 @@ xcuserdata/
 # iOS Frameworks
 *.framework
 *.framework/*
+*.vscode
+*.vscode/*
